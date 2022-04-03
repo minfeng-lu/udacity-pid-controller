@@ -50,14 +50,14 @@ double PID::TotalError() {
    * TODO: Calculate and return the total error
     * The code should return a value in the interval [output_lim_mini, output_lim_maxi]
    */
-    double control = -kp * prev_cte - kd * delta_cte - ki * int_cte;
+    double control = - kp * prev_cte - kd * delta_cte - ki * int_cte;
     if (control < output_lim_min) {
        control = output_lim_min;
     }
     else if (control > output_lim_max) {
        control = output_lim_max;
     }
-    return control;
+    return - control;
 }
 
 double PID::UpdateDeltaTime(double new_delta_time) {

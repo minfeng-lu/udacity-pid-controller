@@ -227,10 +227,10 @@ int main ()
   PID pid_steer = PID();
   PID pid_throttle = PID();
   //The output of the pid_steer controller should be inside [-1.2, 1.2].
-  pid_steer.Init(0.1, 0.01, 0.01, 1.2, -1.2);
+  pid_steer.Init(0.0350, 0.000015, 0.006,  1.2, -1.2);   
 
   // The output of the pid_throttle controller should be inside [-1, 1]
-  pid_throttle.Init(0.35, 0.05, 0.1, 1.0, -1.0);
+  pid_throttle.Init(0.5, 0.01, 0.02, 1.0, -1.0);       
 
   h.onMessage([&pid_steer, &pid_throttle, &new_delta_time, &timer, &prev_timer, &i, &prev_timer](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode)
   {
@@ -308,9 +308,40 @@ int main ()
           yaw gives the actual rotational angle of the car.
           The error is the angle difference between the actual steer and the desired steer to reach the planned position.
           */
-          double yaw_actual = angle_between_points(x_points[x_points.size()-2], y_points[y_points.size()-2], x_points[x_points.size()-1], y_points[y_points.size()-1]);
-          double error_steer = yaw_actual - yaw;
-
+         double desired_yaw;
+         bool found = false;
+         for (int index = 0; index < x_points.size() - 1; index++) {
+            double x1 = x_points[index];
+            double y1 = y_points[index];
+            double x2 = x_points[index+1];
+            double y2 = y_points[index+1];
+            double ux = x_position - x1;
+            double uy = y_position - y1;
+            double vx = x2 - x1;
+            double vy = y2 - y1;
+            double dot_product = ux * vx + uy * vy;
+            if (dot_product < 0) {
+              found = true;
+              cout << "current point: (" << x_position << ", " << y_position << ")" << endl;
+              cout << "found way point ahead: (" << x2 << ", " << y2 << ")" << endl;
+              desired_yaw = angle_between_points(x_position, y_position, x2, y2);
+              break;
+            }     
+          }
+          if (!found) {
+            cout << "did not find way point ahead";
+            desired_yaw = angle_between_points(x_position, y_position, x_points.back(), y_points.back());
+          }
+          if(desired_yaw >= M_PI/2)
+          {
+            desired_yaw = M_PI/2;
+          }
+          else if(desired_yaw <= -M_PI/2)
+          {
+            desired_yaw = -M_PI/2;
+          }
+          double error_steer = yaw - desired_yaw;
+          cout << "desired yaw: " << desired_yaw << " actual yaw: " << yaw << endl;
           /**
           * TODO (step 3): uncomment these lines
           **/
@@ -347,8 +378,13 @@ int main ()
           velocity contains the actual velocity.
           The error is the speed difference between the actual speed and the desired speed.
           */
-          double error_throttle = v_points.back() - velocity;
-
+          double desired_velocity = 0;
+          for (double v : v_points) {
+            desired_velocity += v;
+          }
+          desired_velocity /= v_points.size();
+          double error_throttle = velocity - desired_velocity;
+          cout << "desired velocity: " << desired_velocity << " actual velocity: " << velocity << endl;
           double throttle_output;
           double brake_output;
 
