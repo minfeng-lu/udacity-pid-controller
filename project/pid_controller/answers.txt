@@ -1,7 +1,23 @@
 // Answer the following questions:
 
 // Add the plots to your report and explain them (describe what you see)
+(attached the plots to screenshots folder)
+error_steer.png: the steering output is in oppositive spectrum of error steering (if error is positive the output is positive and vice versa) to offset the error.
+error_throttle.png: the scale is bit skewed so the pattern is hard to see, but it exhibits the similar pattern as error_steer. 
+
 // What is the effect of the PID according to the plots, how each part of the PID affects the control command?
+propotional: propotional to existing error so the applied change will be adjusted based on the difference between the acutal state and desired state 
+differential: stablizes the rate of change error to zero to prevent overshoot
+integral: take time passed into consideration, if the applied change is not able to achive the desired result, the value will increase as time passes
+
 // How would you design a way to automatically tune the PID parameters?
+Adapt reinforced learning, use metrics to track the peformace of the control system and ajust parameters accordingly based on whether the performance has improved or deteriorated. 
+
 // PID controller is a model free controller, i.e. it does not use a model of the car. Could you explain the pros and cons of this type of controller?
-// (Optional) What would you do to improve the PID controller?
+pros:
+simple and effective, easy to implement 
+robust againt variabtions and uncertainties caused by car models
+
+cons: 
+the fine tuning does not generalize well to all types of car models 
+customized control based on specific car model is not possible 
