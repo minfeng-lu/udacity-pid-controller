@@ -227,10 +227,10 @@ int main ()
   PID pid_steer = PID();
   PID pid_throttle = PID();
   //The output of the pid_steer controller should be inside [-1.2, 1.2].
-  pid_steer.Init(0.0350, 0.000015, 0.001,  1.2, -1.2);   
+  pid_steer.Init(0.04, 0.000010, 0.001,  1.2, -1.2);   
 
   // The output of the pid_throttle controller should be inside [-1, 1]
-  pid_throttle.Init(0.15, 0.01, 0.001, 1.0, -1.0);       
+  pid_throttle.Init(0.1, 0.01, 0.001, 1.0, -1.0);       
 
   h.onMessage([&pid_steer, &pid_throttle, &new_delta_time, &timer, &prev_timer, &i, &prev_timer](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode)
   {
@@ -333,6 +333,7 @@ int main ()
             cout << "current point: (" << x_position << ", " << y_position << ")" << endl;
             cout << "last way point ahead: (" << x_points.back() << ", " << y_points.back() << ")" << endl;
             desired_yaw = angle_between_points(x_points.back(), y_points.back(), x_position, y_position);
+
           }
           if(desired_yaw >= M_PI)
           {
