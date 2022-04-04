@@ -227,7 +227,7 @@ int main ()
   PID pid_steer = PID();
   PID pid_throttle = PID();
   //The output of the pid_steer controller should be inside [-1.2, 1.2].
-  pid_steer.Init(0.04, 0.00010, 0.001,  1.2, -1.2);   
+  pid_steer.Init(0.035, 0.00010, 0.0001,  1.2, -1.2);   
 
   // The output of the pid_throttle controller should be inside [-1, 1]
   pid_throttle.Init(0.1, 0.01, 0.001, 1.0, -1.0);       
@@ -332,7 +332,7 @@ int main ()
             cout << "did not find way point ahead" << endl;
             cout << "current point: (" << x_position << ", " << y_position << ")" << endl;
             cout << "last way point ahead: (" << x_points.back() << ", " << y_points.back() << ")" << endl;
-            desired_yaw = angle_between_points(x_points.back(), y_points.back(), x_position, y_position);
+            desired_yaw = angle_between_points(x_position, y_position, x_points.back(), y_points.back());
 
           }
           if(desired_yaw >= M_PI)
